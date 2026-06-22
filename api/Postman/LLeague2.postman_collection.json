@@ -1,0 +1,432 @@
+{
+  "info": {
+    "name": "LLeague2 API",
+    "description": "Full API collection for the LLeague2 tutorial backend (ASP.NET Core + EF Core + PostgreSQL).\n\nUsage:\n1. Set the `baseUrl` collection variable to your API URL (default http://localhost:5084).\n2. Run **Auth > Login** first — it saves the JWT into the `token` variable automatically.\n3. The Create requests save their new ids (seasonId, eventId, divisionId, teamId, tableId, matchId, participantId) into collection variables, so later requests just work.\n\nAll requests except Login, Health, and Missions Catalog send `Authorization: Bearer {{token}}` (set at the collection level).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5084" },
+    { "key": "username", "value": "admin" },
+    { "key": "password", "value": "CHANGE_ME" },
+    { "key": "token", "value": "" },
+    { "key": "seasonId", "value": "" },
+    { "key": "eventId", "value": "" },
+    { "key": "divisionId", "value": "" },
+    { "key": "teamId", "value": "" },
+    { "key": "tableId", "value": "" },
+    { "key": "matchId", "value": "" },
+    { "key": "participantId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health check",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login (saves token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const token = pm.response.json().token;",
+                  "  pm.collectionVariables.set('token', token);",
+                  "  pm.test('token saved', () => pm.expect(token).to.be.a('string'));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/login"
+          }
+        },
+        {
+          "name": "Me (protected probe)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/auth/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Seasons",
+      "item": [
+        {
+          "name": "List seasons",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/seasons" }
+        },
+        {
+          "name": "Create season (saves seasonId)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  pm.collectionVariables.set('seasonId', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Test Season\",\n  \"year\": 2027\n}" },
+            "url": "{{baseUrl}}/seasons"
+          }
+        },
+        {
+          "name": "Get season",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/seasons/{{seasonId}}" }
+        },
+        {
+          "name": "Update season",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Renamed Season\",\n  \"year\": 2027\n}" },
+            "url": "{{baseUrl}}/seasons/{{seasonId}}"
+          }
+        },
+        {
+          "name": "Delete season",
+          "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/seasons/{{seasonId}}" }
+        }
+      ]
+    },
+    {
+      "name": "Events",
+      "item": [
+        {
+          "name": "List events (optional ?seasonId)",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/events?seasonId={{seasonId}}" }
+        },
+        {
+          "name": "Create event (saves eventId)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  pm.collectionVariables.set('eventId', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seasonId\": \"{{seasonId}}\",\n  \"name\": \"Test Regional\",\n  \"slug\": \"test-regional-2027\",\n  \"startDate\": \"2027-03-14\",\n  \"endDate\": \"2027-03-14\",\n  \"location\": \"Tel Aviv\"\n}"
+            },
+            "url": "{{baseUrl}}/events"
+          }
+        },
+        {
+          "name": "Get event",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/events/{{eventId}}" }
+        },
+        {
+          "name": "Update event",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seasonId\": \"{{seasonId}}\",\n  \"name\": \"Test Regional (edited)\",\n  \"slug\": \"test-regional-2027\",\n  \"startDate\": \"2027-03-14\",\n  \"endDate\": \"2027-03-15\",\n  \"location\": \"Haifa\"\n}"
+            },
+            "url": "{{baseUrl}}/events/{{eventId}}"
+          }
+        },
+        {
+          "name": "Delete event",
+          "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/events/{{eventId}}" }
+        }
+      ]
+    },
+    {
+      "name": "Divisions",
+      "item": [
+        {
+          "name": "List divisions (optional ?eventId)",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/divisions?eventId={{eventId}}" }
+        },
+        {
+          "name": "Create division (saves divisionId)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  pm.collectionVariables.set('divisionId', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"eventId\": \"{{eventId}}\",\n  \"name\": \"Division B\",\n  \"color\": \"#e63946\"\n}" },
+            "url": "{{baseUrl}}/divisions"
+          }
+        },
+        {
+          "name": "Get division",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/divisions/{{divisionId}}" }
+        },
+        {
+          "name": "Update division",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"eventId\": \"{{eventId}}\",\n  \"name\": \"Division B (edited)\",\n  \"color\": \"#457b9d\"\n}" },
+            "url": "{{baseUrl}}/divisions/{{divisionId}}"
+          }
+        },
+        {
+          "name": "Delete division",
+          "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/divisions/{{divisionId}}" }
+        },
+        {
+          "name": "List enrolled teams",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/divisions/{{divisionId}}/teams" }
+        },
+        {
+          "name": "Enroll team",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"teamId\": \"{{teamId}}\"\n}" },
+            "url": "{{baseUrl}}/divisions/{{divisionId}}/teams"
+          }
+        },
+        {
+          "name": "Mark team arrived",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/divisions/{{divisionId}}/teams/{{teamId}}/arrive"
+          }
+        },
+        {
+          "name": "List tables",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/divisions/{{divisionId}}/tables" }
+        },
+        {
+          "name": "Create table (saves tableId)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  pm.collectionVariables.set('tableId', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Table 3\"\n}" },
+            "url": "{{baseUrl}}/divisions/{{divisionId}}/tables"
+          }
+        },
+        {
+          "name": "Standings",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/divisions/{{divisionId}}/standings" }
+        }
+      ]
+    },
+    {
+      "name": "Teams",
+      "item": [
+        {
+          "name": "List teams",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/teams" }
+        },
+        {
+          "name": "Create team (saves teamId)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  pm.collectionVariables.set('teamId', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"number\": 2001,\n  \"name\": \"New Team\",\n  \"affiliation\": \"Example School\",\n  \"city\": \"Tel Aviv\",\n  \"region\": \"IL\"\n}"
+            },
+            "url": "{{baseUrl}}/teams"
+          }
+        },
+        {
+          "name": "Create team - INVALID region (expect 400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"number\": 2002,\n  \"name\": \"Bad Region\",\n  \"affiliation\": \"X\",\n  \"city\": \"Y\",\n  \"region\": \"Israel\"\n}"
+            },
+            "url": "{{baseUrl}}/teams"
+          }
+        },
+        {
+          "name": "Get team",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/teams/{{teamId}}" }
+        },
+        {
+          "name": "Update team",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"number\": 2001,\n  \"name\": \"New Team (edited)\",\n  \"affiliation\": \"Example School\",\n  \"city\": \"Haifa\",\n  \"region\": \"IL\"\n}"
+            },
+            "url": "{{baseUrl}}/teams/{{teamId}}"
+          }
+        },
+        {
+          "name": "Delete team",
+          "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/teams/{{teamId}}" }
+        }
+      ]
+    },
+    {
+      "name": "Matches",
+      "item": [
+        {
+          "name": "List matches",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/divisions/{{divisionId}}/matches" }
+        },
+        {
+          "name": "Create match (saves matchId + participantId)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const m = pm.response.json();",
+                  "  pm.collectionVariables.set('matchId', m.id);",
+                  "  if (m.participants && m.participants.length) {",
+                  "    pm.collectionVariables.set('participantId', m.participants[0].id);",
+                  "  }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"round\": 1,\n  \"number\": 1,\n  \"stage\": \"Ranking\",\n  \"participants\": [\n    { \"tableId\": \"{{tableId}}\", \"teamId\": \"{{teamId}}\" }\n  ]\n}"
+            },
+            "url": "{{baseUrl}}/divisions/{{divisionId}}/matches"
+          }
+        },
+        {
+          "name": "Start match",
+          "request": { "method": "POST", "header": [], "url": "{{baseUrl}}/matches/{{matchId}}/start" }
+        },
+        {
+          "name": "Complete match",
+          "request": { "method": "POST", "header": [], "url": "{{baseUrl}}/matches/{{matchId}}/complete" }
+        },
+        {
+          "name": "Abort match",
+          "request": { "method": "POST", "header": [], "url": "{{baseUrl}}/matches/{{matchId}}/abort" }
+        }
+      ]
+    },
+    {
+      "name": "Scoresheets",
+      "item": [
+        {
+          "name": "Missions catalog (public)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/missions/catalog"
+          }
+        },
+        {
+          "name": "Get scoresheet",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/scoresheets/{{participantId}}" }
+        },
+        {
+          "name": "Upsert scoresheet (server scores it)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"missions\": [\n    { \"missionId\": \"M01\", \"clauseIndex\": 0, \"valueType\": \"boolean\", \"value\": \"true\" },\n    { \"missionId\": \"M02\", \"clauseIndex\": 0, \"valueType\": \"number\", \"value\": \"4\" },\n    { \"missionId\": \"M03\", \"clauseIndex\": 0, \"valueType\": \"enum\", \"value\": \"complete\" }\n  ]\n}"
+            },
+            "url": "{{baseUrl}}/scoresheets/{{participantId}}"
+          }
+        },
+        {
+          "name": "Submit scoresheet",
+          "request": { "method": "POST", "header": [], "url": "{{baseUrl}}/scoresheets/{{participantId}}/submit" }
+        }
+      ]
+    }
+  ]
+}

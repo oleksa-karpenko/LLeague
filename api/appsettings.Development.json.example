@@ -1,0 +1,13 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "ConnectionStrings": {
+    "Postgres": "Host=127.0.0.1;Port=5544;Database=lleague;Username=postgres;Password=CHANGE_ME"
+  },
+  "ADMIN_PASSWORD": "CHANGE_ME",
+  "JWT_SECRET": "CHANGE_ME_to_a_long_random_string_at_least_32_chars"
+}
