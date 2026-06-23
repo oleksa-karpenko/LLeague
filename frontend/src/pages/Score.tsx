@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -28,12 +28,17 @@ export default function Score() {
     enabled: !!participantId,
   });
 
+  // Seed the editable form from the loaded scoresheet. Done during render (not in an
+  // effect) per React guidance for adjusting state when data changes — re-seeds whenever
+  // the sheet reference changes (load / save / submit), without cascading effect renders.
   const [values, setValues] = useState<Record<string, string>>({});
-  useEffect(() => {
+  const [seededSheet, setSeededSheet] = useState<typeof sheet>(undefined);
+  if (sheet !== seededSheet) {
+    setSeededSheet(sheet);
     const next: Record<string, string> = {};
     for (const mv of sheet?.missions ?? []) next[`${mv.missionId}:${mv.clauseIndex}`] = mv.value ?? '';
     setValues(next);
-  }, [sheet]);
+  }
 
   function setVal(key: string, v: string) { setValues((prev) => ({ ...prev, [key]: v })); }
 
