@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\api\LLeague.Api.csproj" />
+    <ProjectReference Include="..\..\src\LLeague.Api\LLeague.Api.csproj" />
   </ItemGroup>
 
   <ItemGroup>

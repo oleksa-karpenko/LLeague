@@ -1,0 +1,12 @@
+# Build context is backend/ — keep it small and free of local-only files.
+**/bin/
+**/obj/
+**/*.user
+**/appsettings.Development.json
+**/.vscode/
+**/.idea/
+**/Postman/
+**/*.http
+**/commands.txt
+artifacts/
+tests/

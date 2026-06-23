@@ -1,9 +1,9 @@
 <Project>
   <!--
-    Pull in the repo-root Directory.Build.props (artifacts output layout) when it exists.
+    Pull in the backend/ Directory.Build.props (artifacts output layout) when it exists.
     MSBuild only auto-imports the *nearest* Directory.Build.props, so without this the
-    root one wouldn't apply to the api. The Condition keeps the standalone Docker build
-    (context = ./api, no root props in scope) working unchanged.
+    backend one wouldn't apply to the api project. The Condition keeps the Docker build
+    (which restores before the backend props is copied into context) working unchanged.
   -->
   <PropertyGroup>
     <_RootBuildProps>$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))</_RootBuildProps>

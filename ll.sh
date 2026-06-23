@@ -13,8 +13,8 @@ set -euo pipefail
 
 # --- Paths ---------------------------------------------------------------
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-API_DIR="$ROOT/api"
-WEB_DIR="$ROOT/web"
+API_DIR="$ROOT/backend/src/LLeague.Api"
+WEB_DIR="$ROOT/frontend"
 DB_CONTAINER="lleague2-db"
 
 # --- URLs / ports --------------------------------------------------------
@@ -234,14 +234,14 @@ cmd_open() {     # ./lleague.sh open — open the web app in a browser
   open_url "$WEB_DEV_URL"
 }
 
-cmd_clean() {    # ./lleague.sh clean — remove generated build artifacts (artifacts/, web/dist)
-  info "Removing artifacts/ (all .NET build + coverage output) and web/dist..."
-  rm -rf "$ROOT/artifacts" "$WEB_DIR/dist"
+cmd_clean() {    # ./lleague.sh clean — remove generated build artifacts (backend/artifacts, frontend/dist)
+  info "Removing backend/artifacts (all .NET build + coverage output) and frontend/dist..."
+  rm -rf "$ROOT/backend/artifacts" "$WEB_DIR/dist"
   # Drop any stale per-project bin/obj from before the artifacts-output layout, too.
   rm -rf "$API_DIR/bin" "$API_DIR/obj"
   ok "Cleaned. (node_modules left intact — use 'clean --all' to remove it too)"
   if [[ "${1:-}" == "--all" ]]; then
-    info "Removing web/node_modules..."
+    info "Removing frontend/node_modules..."
     rm -rf "$WEB_DIR/node_modules"
     ok "node_modules removed."
   fi

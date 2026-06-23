@@ -1,6 +1,6 @@
 <Solution>
-  <Folder Name="/api/">
-    <Project Path="api/LLeague.Api.csproj" />
+  <Folder Name="/src/">
+    <Project Path="src/LLeague.Api/LLeague.Api.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/LLeague.Api.Tests/LLeague.Api.Tests.csproj" />
