@@ -2,37 +2,57 @@ import { api, setToken, clearToken } from './client';
 import type { Season, Event, Division, Team } from './types';
 
 import type {
-  EnrolledTeam, Table, Match, Mission, Scoresheet, MissionValue, StandingRow
+  EnrolledTeam,
+  Table,
+  Match,
+  Mission,
+  Scoresheet,
+  MissionValue,
+  StandingRow,
 } from './types';
 
 // division sub-resources
-export const listEnrolledTeams = (divisionId: string) => api<EnrolledTeam[]>(`/divisions/${divisionId}/teams`);
-export const enrollTeam   = (divisionId: string, teamId: string) =>
+export const listEnrolledTeams = (divisionId: string) =>
+  api<EnrolledTeam[]>(`/divisions/${divisionId}/teams`);
+export const enrollTeam = (divisionId: string, teamId: string) =>
   api<void>(`/divisions/${divisionId}/teams`, { method: 'POST', body: JSON.stringify({ teamId }) });
-export const markArrived  = (divisionId: string, teamId: string) =>
+export const markArrived = (divisionId: string, teamId: string) =>
   api<void>(`/divisions/${divisionId}/teams/${teamId}/arrive`, { method: 'POST' });
-export const listTables   = (divisionId: string) => api<Table[]>(`/divisions/${divisionId}/tables`);
-export const createTable  = (divisionId: string, name: string) =>
+export const listTables = (divisionId: string) => api<Table[]>(`/divisions/${divisionId}/tables`);
+export const createTable = (divisionId: string, name: string) =>
   api<Table>(`/divisions/${divisionId}/tables`, { method: 'POST', body: JSON.stringify({ name }) });
 
 // matches
-export const listMatches  = (divisionId: string) => api<Match[]>(`/divisions/${divisionId}/matches`);
-export const createMatch  = (divisionId: string, body: { round: number; number: number; stage: string; participants: { tableId: string; teamId: string }[] }) =>
-  api<Match>(`/divisions/${divisionId}/matches`, { method: 'POST', body: JSON.stringify(body) });
-export const startMatch    = (id: string) => api<void>(`/matches/${id}/start`, { method: 'POST' });
-export const completeMatch = (id: string) => api<void>(`/matches/${id}/complete`, { method: 'POST' });
-export const abortMatch    = (id: string) => api<void>(`/matches/${id}/abort`, { method: 'POST' });
+export const listMatches = (divisionId: string) => api<Match[]>(`/divisions/${divisionId}/matches`);
+export const createMatch = (
+  divisionId: string,
+  body: {
+    round: number;
+    number: number;
+    stage: string;
+    participants: { tableId: string; teamId: string }[];
+  },
+) => api<Match>(`/divisions/${divisionId}/matches`, { method: 'POST', body: JSON.stringify(body) });
+export const startMatch = (id: string) => api<void>(`/matches/${id}/start`, { method: 'POST' });
+export const completeMatch = (id: string) =>
+  api<void>(`/matches/${id}/complete`, { method: 'POST' });
+export const abortMatch = (id: string) => api<void>(`/matches/${id}/abort`, { method: 'POST' });
 
 // scoresheets
 export const getMissionCatalog = () => api<Mission[]>('/missions/catalog');
-export const getScoresheet     = (participantId: string) => api<Scoresheet>(`/scoresheets/${participantId}`);
-export const upsertScoresheet  = (participantId: string, missions: MissionValue[]) =>
-  api<Scoresheet>(`/scoresheets/${participantId}`, { method: 'PUT', body: JSON.stringify({ missions }) });
-export const submitScoresheet  = (participantId: string) =>
+export const getScoresheet = (participantId: string) =>
+  api<Scoresheet>(`/scoresheets/${participantId}`);
+export const upsertScoresheet = (participantId: string, missions: MissionValue[]) =>
+  api<Scoresheet>(`/scoresheets/${participantId}`, {
+    method: 'PUT',
+    body: JSON.stringify({ missions }),
+  });
+export const submitScoresheet = (participantId: string) =>
   api<Scoresheet>(`/scoresheets/${participantId}/submit`, { method: 'POST' });
 
 // standings
-export const getStandings = (divisionId: string) => api<StandingRow[]>(`/divisions/${divisionId}/standings`);
+export const getStandings = (divisionId: string) =>
+  api<StandingRow[]>(`/divisions/${divisionId}/standings`);
 
 export async function login(username: string, password: string): Promise<void> {
   const res = await api<{ token: string }>('/auth/login', {
@@ -57,10 +77,7 @@ export const createSeason = (body: { name: string; year: number }) =>
     body: JSON.stringify(body),
   });
 
-export const updateSeason = (
-  id: string,
-  body: { name: string; year: number },
-) =>
+export const updateSeason = (id: string, body: { name: string; year: number }) =>
   api<Season>(`/seasons/${id}`, {
     method: 'PUT',
     body: JSON.stringify(body),
