@@ -1,0 +1,3 @@
+# Fast pre-push safety net for the frontend (typecheck + unit tests).
+# Backend correctness is covered by the build (warnings-as-errors) + CI.
+cd frontend && npm run typecheck && npm run test

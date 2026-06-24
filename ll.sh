@@ -272,6 +272,10 @@ ${C_BOLD}Database${C_OFF}
   ${C_GREEN}migrate${C_OFF} [Name]    add migration <Name>, or apply pending if no name
   ${C_GREEN}dbreset${C_OFF}           drop & recreate the dev database from migrations
 
+${C_BOLD}Quality gates${C_OFF}
+  ${C_GREEN}format${C_OFF}            format both stacks (C# whitespace + Prettier/ESLint --fix)
+  ${C_GREEN}test${C_OFF}              run backend (+coverage gate) and frontend test suites
+
 ${C_BOLD}Misc${C_OFF}
   ${C_GREEN}open${C_OFF}              open the web app in your browser
   ${C_GREEN}clean${C_OFF} [--all]     remove bin/obj/dist (and node_modules with --all)
@@ -279,6 +283,27 @@ ${C_BOLD}Misc${C_OFF}
 
 services: ${C_DIM}db, api, web${C_OFF}    Examples: ${C_DIM}./lleague.sh up --build  •  ./lleague.sh logs api  •  ./lleague.sh dev${C_OFF}
 EOF
+}
+
+# --- Quality gates -------------------------------------------------------
+# Format both stacks the same way the CI gates check (whitespace for C#, Prettier+ESLint for web).
+cmd_format() {
+  need dotnet; need npm
+  info "Formatting backend (C# whitespace)..."
+  ( cd "$ROOT/backend" && dotnet format whitespace LLeague.slnx )
+  info "Formatting frontend (Prettier + ESLint --fix)..."
+  ( cd "$WEB_DIR" && npm run format && npm run lint -- --fix )
+  ok "Formatted both stacks."
+}
+
+# Run the full test suites: backend (with the 60% coverage gate) + frontend (Vitest).
+cmd_test() {
+  need dotnet; need npm
+  info "Backend tests + coverage gate..."
+  ( cd "$ROOT/backend" && ./coverage.sh )
+  info "Frontend tests..."
+  ( cd "$WEB_DIR" && npm run test )
+  ok "All tests passed."
 }
 
 # --- Dispatch ------------------------------------------------------------
@@ -301,6 +326,8 @@ case "$cmd" in
   dbreset)        cmd_db_reset "$@" ;;
   open)           cmd_open "$@" ;;
   clean)          cmd_clean "$@" ;;
+  format)         cmd_format "$@" ;;
+  test)           cmd_test "$@" ;;
   help|-h|--help) cmd_help ;;
   *)              warn "Unknown command: $cmd"; echo; cmd_help; exit 1 ;;
 esac

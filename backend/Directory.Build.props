@@ -9,4 +9,16 @@
     <UseArtifactsOutput>true</UseArtifactsOutput>
     <ArtifactsPath>$(MSBuildThisFileDirectory)artifacts</ArtifactsPath>
   </PropertyGroup>
+
+  <!--
+    Quality gates (see Copilot.md "Part 2"). Build is clean today, so these are enforceable
+    without churn. Compiler + analyzer warnings (incl. nullable CS86xx from .editorconfig) become
+    build errors. Code-style IDE rules stay at .editorconfig severities (suggestions), so the gate
+    catches real defects without forcing rewrites of intentional expression-bodied style.
+  -->
+  <PropertyGroup>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+  </PropertyGroup>
 </Project>

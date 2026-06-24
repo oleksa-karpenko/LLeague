@@ -35,6 +35,11 @@ jobs:
           key: nuget-${{ runner.os }}-${{ hashFiles('backend/**/*.csproj') }}
           restore-keys: nuget-${{ runner.os }}-
 
+      # Whitespace/formatting gate. Code-style correctness (analyzers, nullable, warnings)
+      # is enforced at build time via TreatWarningsAsErrors in Directory.Build.props.
+      - name: Format check
+        run: dotnet format whitespace LLeague.slnx --verify-no-changes
+
       # Builds, runs unit + Testcontainers integration tests, generates the coverage
       # report, prints a summary, and fails if line coverage is below the gate.
       # All logic lives in backend/coverage.sh — the same script used locally.
@@ -73,6 +78,15 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Format check
+        run: npm run format:check
+
+      - name: Test + coverage
+        run: npm run test:coverage
 
       - name: Build
         run: npm run build

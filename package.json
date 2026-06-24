@@ -1,0 +1,13 @@
+{
+  "name": "lleague-root",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Repo-root dev tooling only: git hooks (husky) + staged-file checks (lint-staged). The actual apps live in backend/ (.NET) and frontend/ (React). Run `npm install` here once to enable the pre-commit hooks.",
+  "scripts": {
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7"
+  }
+}

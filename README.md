@@ -96,6 +96,36 @@ dotnet test LLeague.slnx        # 43 tests: domain unit + API integration (Testc
 Docker must be running — the integration tests spin up a throwaway PostgreSQL container.
 The pure unit tests don't need it: `dotnet test --filter "FullyQualifiedName~ScoringServiceTests"`.
 
+The frontend uses **Vitest + React Testing Library** (`cd frontend && npm run test`).
+
+## Quality gates & developer tooling
+
+All gates are enforced in CI and block PRs. Run them locally before pushing:
+
+```bash
+# Backend  (build treats compiler + analyzer warnings as errors — see Directory.Build.props)
+cd backend
+dotnet format whitespace LLeague.slnx --verify-no-changes   # formatting gate
+./coverage.sh                                                # tests + 60% line-coverage gate
+
+# Frontend
+cd frontend
+npm run lint          # ESLint (warnings fail)
+npm run typecheck     # tsc
+npm run format:check  # Prettier
+npm run test          # Vitest + React Testing Library
+```
+
+**Pre-commit hooks** (husky + lint-staged): run `npm install` once at the **repo root** to enable
+them. On commit, staged frontend files are auto-fixed (ESLint + Prettier) and staged C# is
+whitespace-formatted; a pre-push hook runs the frontend typecheck + tests.
+
+**AI assistant config**: conventions for GitHub Copilot / Claude Code live in
+`.github/copilot-instructions.md`, path-scoped `.github/instructions/*.instructions.md`,
+`AGENTS.md`, and reusable prompts under `.github/prompts/`. The full plan and a measurement loop
+are in [`Copilot.md`](Copilot.md); track config experiments in
+[`docs/ai-config-log.md`](docs/ai-config-log.md) with `scripts/ai-metrics.sh`.
+
 ## Project structure
 
 ```
