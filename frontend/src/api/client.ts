@@ -24,8 +24,7 @@ export function clearToken() {
 
 export async function api<T>(path: string, options: RequestInit = {}): Promise<T> {
   const headers = new Headers(options.headers);
-  if (options.body && !headers.has('Content-Type'))
-    headers.set('Content-Type', 'application/json');
+  if (options.body && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
 
   const token = getToken();
   if (token) headers.set('Authorization', `Bearer ${token}`);
@@ -36,13 +35,13 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
     let message = res.statusText;
     try {
       const body = await res.json();
-      if (body?.error) message = body.error;   // our ErrorResponse shape
+      if (body?.error) message = body.error; // our ErrorResponse shape
     } catch {
       /* non-JSON error body */
     }
     throw new ApiError(res.status, message);
   }
 
-  if (res.status === 204) return undefined as T;  // No Content
+  if (res.status === 204) return undefined as T; // No Content
   return (await res.json()) as T;
 }

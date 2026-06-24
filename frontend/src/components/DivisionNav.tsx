@@ -15,14 +15,28 @@ export default function DivisionNav({ live }: { live?: boolean }) {
       <Brand />
       <nav className="nav-tabs" style={{ marginLeft: 10 }}>
         {tabs.map((t) => (
-          <NavLink key={t.to} to={t.to} className={({ isActive }) => `nav-tab${isActive ? ' active' : ''}`}>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}>{t.icon}{t.label}</span>
+          <NavLink
+            key={t.to}
+            to={t.to}
+            className={({ isActive }) => `nav-tab${isActive ? ' active' : ''}`}
+          >
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}>
+              {t.icon}
+              {t.label}
+            </span>
           </NavLink>
         ))}
       </nav>
       <span className="spacer" />
-      {live && <span className="badge badge-live" style={{ marginRight: 4 }}><span className="dot" />Live</span>}
-      <NavLink to="/admin/divisions" className="btn btn-ghost btn-sm"><IconBack size={16} /> Divisions</NavLink>
+      {live && (
+        <span className="badge badge-live" style={{ marginRight: 4 }}>
+          <span className="dot" />
+          Live
+        </span>
+      )}
+      <NavLink to="/admin/divisions" className="btn btn-ghost btn-sm">
+        <IconBack size={16} /> Divisions
+      </NavLink>
     </header>
   );
 }
