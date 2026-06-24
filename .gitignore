@@ -481,15 +481,14 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 
-# All generated .NET + tooling output (build, coverage, test results) — see Directory.Build.props
-/artifacts/
+# All generated .NET + tooling output (build, coverage, test results) — see backend/Directory.Build.props
+/backend/artifacts/
 
 # Secrets / local-only config (never commit; see *.example files)
 .env
 **/appsettings.Development.json
 
 # Local-only / not for the public repo
-/tutorial/
-api/commands.txt
+backend/src/LLeague.Api/commands.txt
 .claude/
 

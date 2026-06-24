@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  api:
+    name: API — test & coverage
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write          # allows publishing the coverage report to the gh-pages branch
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      # Builds, runs unit + Testcontainers integration tests, generates the coverage
+      # report, prints a summary, and fails if line coverage is below the gate.
+      # All logic lives in backend/coverage.sh — the same script used locally.
+      - name: Test + coverage (60% line gate)
+        env:
+          COVERAGE_MIN: '60'
+        run: ./coverage.sh --ci
+
+      # Publish the browsable HTML report + SVG badges to GitHub Pages (main only).
+      - name: Publish coverage report
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: backend/artifacts/coverage
+
+  web:
+    name: Web — lint & build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build

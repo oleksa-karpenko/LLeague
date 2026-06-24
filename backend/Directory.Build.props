@@ -1,7 +1,7 @@
 <Project>
   <!--
-    Centralize all .NET build output (bin/obj/publish/package) into one repo-root
-    "artifacts/" folder instead of scattering bin/ and obj/ under each project.
+    Centralize all .NET build output (bin/obj/publish/package) into one
+    "backend/artifacts/" folder instead of scattering bin/ and obj/ under each project.
     See: https://learn.microsoft.com/dotnet/core/sdk/artifacts-output
     The whole folder is git-ignored and safe to delete/regenerate at any time.
   -->

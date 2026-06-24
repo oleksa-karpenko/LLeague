@@ -9,11 +9,27 @@ How to measure, view, and browse test coverage for the API.
 ```
 
 Runs the test suite with coverage, builds the HTML report (migrations excluded),
-prints a text summary, and opens the report in your browser. Use `./coverage.sh --no-open`
-to skip launching the browser (e.g. on CI).
+prints a text summary, **enforces the line-coverage gate**, and opens the report in your
+browser. Use `./coverage.sh --no-open` to skip launching the browser.
 
 > Docker must be running — the integration tests spin up a throwaway Postgres
 > container via Testcontainers. The unit tests (`ScoringServiceTests`) don't need it.
+
+## Quality gate & CI (same script)
+
+`coverage.sh` is the single source of truth for both local runs and CI — CI just calls it,
+so the logic lives in one place and the numbers always match.
+
+- **Gate:** the script fails (exit 1) if **line coverage** is below `COVERAGE_MIN` (default
+  `60`). Override per-run: `COVERAGE_MIN=70 ./coverage.sh`.
+- **CI mode:** pass `--ci`, or just run under GitHub Actions (auto-detected via the
+  `GITHUB_ACTIONS`/`CI` env vars). In CI the script skips the browser, additionally emits
+  **SVG badges** and a **GitHub-flavored markdown summary** (appended to the workflow run
+  page via `$GITHUB_STEP_SUMMARY`), and annotates a failure with `::error::`.
+- **Config:** `CONFIGURATION` (default `Release`) sets the build/test configuration.
+
+So the CI step is a one-liner — `./coverage.sh --ci` — and the published HTML report + badge
+come from the same `artifacts/coverage` output (see `.github/workflows/ci.yml`).
 
 ## How it works
 
@@ -34,7 +50,7 @@ If you'd rather run the steps yourself instead of `./coverage.sh`:
 # reportgenerator lives in the dotnet tools dir — put it on PATH (add to ~/.zshrc to persist)
 export PATH="$PATH:$HOME/.dotnet/tools"
 
-cd <repo-root>
+cd backend   # the solution + this script live here
 
 # 1. Run tests + collect coverage into artifacts/ (clear old results first)
 rm -rf artifacts/test-results artifacts/coverage

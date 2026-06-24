@@ -6,7 +6,7 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/../artifacts/bin/LLeague.Api/debug/LLeague.Api.dll",
+      "program": "${workspaceFolder}/../../artifacts/bin/LLeague.Api/debug/LLeague.Api.dll",
       "cwd": "${workspaceFolder}",
       "args": [],
       "stopAtEntry": false,
