@@ -1,5 +1,8 @@
 # LLeague
 
+[![CI](https://github.com/oleksa-karpenko/LLeague/actions/workflows/ci.yml/badge.svg)](https://github.com/oleksa-karpenko/LLeague/actions/workflows/ci.yml)
+[![coverage](https://oleksa-karpenko.github.io/LLeague/badge_linecoverage.svg)](https://oleksa-karpenko.github.io/LLeague/)
+
 A full-stack app for running **robotics tournaments** — managing seasons, events, divisions,
 teams, match scheduling, server-authoritative scoring, and live standings.
 

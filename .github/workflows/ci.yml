@@ -38,6 +38,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: backend/artifacts/coverage
+          force_orphan: true        # keep gh-pages at a single commit (no deploy-history bloat)
 
   web:
     name: Web — lint & build
