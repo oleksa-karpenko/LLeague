@@ -1,3 +1,4 @@
+using System.Reflection;
 using LLeague.Api.Application;
 using LLeague.Api.Infrastructure;
 using LLeague.Api.Middleware;
@@ -38,6 +39,15 @@ app.UseHttpsRedirection();
 app.UseAuthentication();    // reads & validates the bearer token
 app.UseAuthorization();     // enforces [Authorize]
 app.MapControllers();
+
+// ---- Build info ----
+// Reports the running build's version, set by MinVer from the latest 'v*' git tag.
+string apiVersion = Assembly.GetExecutingAssembly()
+    .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+    ?? "unknown";
+app.MapGet("/version", () => Results.Ok(new { version = apiVersion }))
+    .AllowAnonymous()
+    .WithName("GetVersion");
 
 app.Run();
 
