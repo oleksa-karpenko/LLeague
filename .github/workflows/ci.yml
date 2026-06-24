@@ -8,8 +8,10 @@ on:
 
 jobs:
   api:
-    name: API — build & test
+    name: API — test & coverage
     runs-on: ubuntu-latest
+    permissions:
+      contents: write          # allows publishing the coverage report to the gh-pages branch
     defaults:
       run:
         working-directory: backend
@@ -21,15 +23,21 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
-      - name: Restore
-        run: dotnet restore LLeague.slnx
+      # Builds, runs unit + Testcontainers integration tests, generates the coverage
+      # report, prints a summary, and fails if line coverage is below the gate.
+      # All logic lives in backend/coverage.sh — the same script used locally.
+      - name: Test + coverage (60% line gate)
+        env:
+          COVERAGE_MIN: '60'
+        run: ./coverage.sh --ci
 
-      - name: Build
-        run: dotnet build LLeague.slnx --configuration Release --no-restore
-
-      # Integration tests use Testcontainers; the ubuntu runner has Docker available.
-      - name: Test
-        run: dotnet test LLeague.slnx --configuration Release --no-build --verbosity normal
+      # Publish the browsable HTML report + SVG badges to GitHub Pages (main only).
+      - name: Publish coverage report
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: backend/artifacts/coverage
 
   web:
     name: Web — lint & build
