@@ -18,4 +18,16 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
+
+  <!-- Release versioning: MinVer derives <Version> from the latest 'v*' git tag.
+       Untagged commits get a height-based prerelease (e.g. 0.1.1-alpha.0.3).
+       Needs git history + tags at build time — CI checkout uses fetch-depth: 0.
+       Docker builds (no .git in the build context) fall back to 0.0.0-alpha.0 unless
+       you pass -p:MinVerVersionOverride=<version>. -->
+  <PropertyGroup>
+    <MinVerTagPrefix>v</MinVerTagPrefix>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MinVer" Version="7.0.0" PrivateAssets="all" />
+  </ItemGroup>
 </Project>
